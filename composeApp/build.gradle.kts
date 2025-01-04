@@ -119,6 +119,7 @@ dependencies {
 
 compose.desktop {
     application {
+        mainClass = "com.sercan.bookpedia.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
