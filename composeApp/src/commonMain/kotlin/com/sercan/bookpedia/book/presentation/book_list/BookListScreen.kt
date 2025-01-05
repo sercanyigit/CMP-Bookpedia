@@ -1,37 +1,24 @@
 package com.sercan.bookpedia.book.presentation.book_list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.favorites
 import cmp_bookpedia.composeapp.generated.resources.no_favorite_books
@@ -71,8 +58,6 @@ fun BookListScreen(
     onAction: (BookListAction) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val pagerState = rememberPagerState { 2 }
     val searchResultsListState = rememberLazyListState()
     val favoriteBooksListState = rememberLazyListState()
 
@@ -80,162 +65,113 @@ fun BookListScreen(
         searchResultsListState.animateScrollToItem(0)
     }
 
-    LaunchedEffect(state.selectedTabIndex) {
-        pagerState.animateScrollToPage(state.selectedTabIndex)
-    }
-
-    LaunchedEffect(pagerState.currentPage) {
-        onAction(BookListAction.OnTabSelected(pagerState.currentPage))
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBlue)
+            .background(Color.White)
             .statusBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BookSearchBar(
-            searchQuery = state.searchQuery,
-            onSearchQueryChange = {
-                onAction(BookListAction.OnSearchQueryChange(it))
-            },
-            onImeSearch = {
-                keyboardController?.hide()
-            },
+        Text(
+            text = "Bookmark",
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
+        
+        Column(
             modifier = Modifier
-                .widthIn(max = 400.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
+                text = "Recommendation",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(state.searchResults.take(5)) { book ->
+                    BookCoverItem(
+                        book = book,
+                        onClick = { onAction(BookListAction.OnBookClick(book)) }
+                    )
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-        )
-        Surface(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            color = DesertWhite,
-            shape = RoundedCornerShape(
-                topStart = 32.dp,
-                topEnd = 32.dp
-            )
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TabRow(
-                    selectedTabIndex = state.selectedTabIndex,
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                        .widthIn(max = 700.dp)
-                        .fillMaxWidth(),
-                    containerColor = DesertWhite,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.SecondaryIndicator(
-                            color = SandYellow,
-                            modifier = Modifier
-                                .tabIndicatorOffset(tabPositions[state.selectedTabIndex])
-                        )
-                    }
-                ) {
-                    Tab(
-                        selected = state.selectedTabIndex == 0,
-                        onClick = {
-                            onAction(BookListAction.OnTabSelected(0))
-                        },
-                        modifier = Modifier.weight(1f),
-                        selectedContentColor = SandYellow,
-                        unselectedContentColor = Color.Black.copy(alpha = 0.5f)
-                    ) {
+            Text(
+                text = "Just for you",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
+            if(state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            } else {
+                when {
+                    state.errorMessage != null -> {
                         Text(
-                            text = stringResource(Res.string.search_results),
-                            modifier = Modifier
-                                .padding(vertical = 12.dp)
+                            text = state.errorMessage.asString(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
-                    Tab(
-                        selected = state.selectedTabIndex == 1,
-                        onClick = {
-                            onAction(BookListAction.OnTabSelected(1))
-                        },
-                        modifier = Modifier.weight(1f),
-                        selectedContentColor = SandYellow,
-                        unselectedContentColor = Color.Black.copy(alpha = 0.5f)
-                    ) {
+                    state.searchResults.isEmpty() -> {
                         Text(
-                            text = stringResource(Res.string.favorites),
-                            modifier = Modifier
-                                .padding(vertical = 12.dp)
+                            text = stringResource(Res.string.no_search_results),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) { pageIndex ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when(pageIndex) {
-                            0 -> {
-                                if(state.isLoading) {
-                                    CircularProgressIndicator()
-                                } else {
-                                    when {
-                                        state.errorMessage != null -> {
-                                            Text(
-                                                text = state.errorMessage.asString(),
-                                                textAlign = TextAlign.Center,
-                                                style = MaterialTheme.typography.headlineSmall,
-                                                color = MaterialTheme.colorScheme.error
-                                            )
-                                        }
-                                        state.searchResults.isEmpty() -> {
-                                            Text(
-                                                text = stringResource(Res.string.no_search_results),
-                                                textAlign = TextAlign.Center,
-                                                style = MaterialTheme.typography.headlineSmall,
-                                                color = MaterialTheme.colorScheme.error
-                                            )
-                                        }
-                                        else -> {
-                                            BookList(
-                                                books = state.searchResults,
-                                                onBookClick = {
-                                                    onAction(BookListAction.OnBookClick(it))
-                                                },
-                                                modifier = Modifier.fillMaxSize(),
-                                                scrollState = searchResultsListState
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            1 -> {
-                                if(state.favoriteBooks.isEmpty()) {
-                                    Text(
-                                        text = stringResource(Res.string.no_favorite_books),
-                                        textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.headlineSmall,
-                                    )
-                                } else {
-                                    BookList(
-                                        books = state.favoriteBooks,
-                                        onBookClick = {
-                                            onAction(BookListAction.OnBookClick(it))
-                                        },
-                                        modifier = Modifier.fillMaxSize(),
-                                        scrollState = favoriteBooksListState
-                                    )
-                                }
-                            }
-                        }
+                    else -> {
+                        BookList(
+                            books = state.searchResults,
+                            onBookClick = {
+                                onAction(BookListAction.OnBookClick(it))
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            scrollState = searchResultsListState
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BookCoverItem(
+    book: Book,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .width(120.dp)
+            .height(180.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 4.dp
+    ) {
+        AsyncImage(
+            model = book.imageUrl,
+            contentDescription = book.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

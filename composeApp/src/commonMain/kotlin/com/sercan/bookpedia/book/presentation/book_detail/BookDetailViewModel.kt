@@ -1,53 +1,46 @@
 package com.sercan.bookpedia.book.presentation.book_detail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import com.sercan.bookpedia.app.Route
 import com.sercan.bookpedia.book.domain.BookRepository
 import com.sercan.bookpedia.core.domain.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BookDetailViewModel(
-    private val bookRepository: BookRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val bookRepository: BookRepository
 ): ViewModel() {
 
-    private val bookId = savedStateHandle.toRoute<Route.BookDetail>().id
-
     private val _state = MutableStateFlow(BookDetailState())
-    val state = _state
-        .onStart {
-            fetchBookDescription()
-            observeFavoriteStatus()
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            _state.value
-        )
+    val state = _state.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000L),
+        _state.value
+    )
 
     fun onAction(action: BookDetailAction) {
         when(action) {
             is BookDetailAction.OnSelectedBookChange -> {
                 _state.update { it.copy(
-                    book = action.book
+                    book = action.book,
+                    isLoading = true
                 ) }
+                action.book.id.let { bookId ->
+                    observeFavoriteStatus(bookId)
+                    fetchBookDescription(bookId)
+                }
             }
             is BookDetailAction.OnFavoriteClick -> {
                 viewModelScope.launch {
-                    if(state.value.isFavorite) {
-                        bookRepository.deleteFromFavorites(bookId)
-                    } else {
-                        state.value.book?.let { book ->
+                    state.value.book?.let { book ->
+                        if(state.value.isFavorite) {
+                            bookRepository.deleteFromFavorites(book.id)
+                        } else {
                             bookRepository.markAsFavorite(book)
                         }
                     }
@@ -57,7 +50,7 @@ class BookDetailViewModel(
         }
     }
 
-    private fun observeFavoriteStatus() {
+    private fun observeFavoriteStatus(bookId: String) {
         bookRepository
             .isBookFavorite(bookId)
             .onEach { isFavorite ->
@@ -68,7 +61,7 @@ class BookDetailViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun fetchBookDescription() {
+    private fun fetchBookDescription(bookId: String) {
         viewModelScope.launch {
             bookRepository
                 .getBookDescription(bookId)
