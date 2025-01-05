@@ -2,6 +2,7 @@ package com.sercan.bookpedia.book.data.mappers
 
 import com.sercan.bookpedia.book.data.database.BookEntity
 import com.sercan.bookpedia.book.data.dto.SearchedBookDto
+import com.sercan.bookpedia.book.data.dto.TrendingBookDto
 import com.sercan.bookpedia.book.domain.Book
 
 fun SearchedBookDto.toBook(): Book {
@@ -53,5 +54,27 @@ fun BookEntity.toBook(): Book {
         ratingCount = ratingsCount,
         numPages = numPagesMedian,
         numEditions = numEditions
+    )
+}
+
+fun TrendingBookDto.toBook(): Book {
+    val coverUrl = if (coverId != null) {
+        "https://covers.openlibrary.org/b/id/$coverId-L.jpg"
+    } else {
+        "https://openlibrary.org/images/icons/avatar_book.png"
+    }
+    
+    return Book(
+        id = key.removePrefix("/works/"),
+        title = title,
+        imageUrl = coverUrl,
+        authors = authorNames ?: listOf("Unknown Author"),
+        description = null,
+        languages = emptyList(),
+        firstPublishYear = firstPublishYear?.toString(),
+        averageRating = null,
+        ratingCount = null,
+        numPages = null,
+        numEditions = editionCount ?: 0
     )
 }

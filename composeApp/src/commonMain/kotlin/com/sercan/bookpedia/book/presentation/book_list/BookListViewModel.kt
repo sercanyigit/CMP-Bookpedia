@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.domain.BookRepository
-import com.sercan.bookpedia.core.domain.onError
-import com.sercan.bookpedia.core.domain.onSuccess
+import com.sercan.bookpedia.core.domain.Result
 import com.sercan.bookpedia.core.presentation.toUiText
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BookListViewModel(
@@ -19,7 +21,6 @@ class BookListViewModel(
 ) : ViewModel() {
 
     private var cachedBooks = emptyList<Book>()
-    private var searchJob: Job? = null
 
     private val _state = MutableStateFlow(BookListState())
     val state = combine(
@@ -28,16 +29,43 @@ class BookListViewModel(
     ) { state, favoriteBooks ->
         state.copy(
             favoriteBooks = favoriteBooks,
-            isLoading = false
+            isLoading = state.isLoading
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
+        SharingStarted.Eagerly,
         BookListState()
     )
 
     init {
-        observeSearchQuery()
+        loadTrendingBooks()
+    }
+
+    private fun loadTrendingBooks() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            
+            when (val result = bookRepository.getTrendingBooks()) {
+                is Result.Success -> {
+                    cachedBooks = result.data
+                    _state.update {
+                        it.copy(
+                            searchResults = result.data,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = result.error.toUiText()
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun onAction(action: BookListAction) {
@@ -56,58 +84,6 @@ class BookListViewModel(
                 }
             }
         }
-    }
-
-    private fun observeSearchQuery() {
-        state
-            .map { it.searchQuery }
-            .distinctUntilChanged()
-            .debounce(500L)
-            .onEach { query ->
-                when {
-                    query.isBlank() -> {
-                        _state.update {
-                            it.copy(
-                                errorMessage = null,
-                                searchResults = cachedBooks
-                            )
-                        }
-                    }
-                    query.length >= 2 -> {
-                        searchJob?.cancel()
-                        searchJob = searchBooks(query)
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun searchBooks(query: String) = viewModelScope.launch {
-        _state.update {
-            it.copy(
-                isLoading = true
-            )
-        }
-        bookRepository
-            .searchBooks(query)
-            .onSuccess { searchResults ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        searchResults = searchResults
-                    )
-                }
-            }
-            .onError { error ->
-                _state.update {
-                    it.copy(
-                        searchResults = emptyList(),
-                        isLoading = false,
-                        errorMessage = error.toUiText()
-                    )
-                }
-            }
     }
 
     fun removeFromFavorites(book: Book) {

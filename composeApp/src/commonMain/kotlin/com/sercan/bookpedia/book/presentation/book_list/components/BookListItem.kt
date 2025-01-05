@@ -14,8 +14,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.core.presentation.SandYellow
+import com.sercan.bookpedia.core.presentation.components.PulseAnimation
 import kotlin.math.round
 
 @Composable
@@ -32,14 +34,27 @@ fun BookListItem(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = book.imageUrl,
-            contentDescription = book.title,
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
                 .size(width = 60.dp, height = 80.dp)
                 .clip(RoundedCornerShape(8.dp))
-        )
+        ) {
+            var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+            
+            AsyncImage(
+                model = book.imageUrl,
+                contentDescription = book.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                onState = { imageState = it }
+            )
+            
+            if (imageState is AsyncImagePainter.State.Loading || imageState is AsyncImagePainter.State.Error) {
+                PulseAnimation(
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
         
         Column(
             modifier = Modifier.weight(1f)

@@ -31,11 +31,7 @@ fun FavoritesScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
-        } else if (state.favoriteBooks.isEmpty()) {
+        if (state.favoriteBooks.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

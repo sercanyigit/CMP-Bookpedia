@@ -17,7 +17,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.core.presentation.components.PulseAnimation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,14 +42,25 @@ fun FavoriteBookItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = book.imageUrl,
-                contentDescription = book.title,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
                     .size(width = 80.dp, height = 120.dp)
                     .clip(RoundedCornerShape(8.dp))
-            )
+            ) {
+                var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+                
+                AsyncImage(
+                    model = book.imageUrl,
+                    contentDescription = book.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                    onState = { imageState = it }
+                )
+                
+                if (imageState is AsyncImagePainter.State.Loading || imageState is AsyncImagePainter.State.Error) {
+                    PulseAnimation()
+                }
+            }
 
             Column(
                 modifier = Modifier.weight(1f)

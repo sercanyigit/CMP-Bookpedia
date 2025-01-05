@@ -1,93 +1,108 @@
 package com.sercan.bookpedia.book.presentation.search
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cmp_bookpedia.composeapp.generated.resources.Res
-import cmp_bookpedia.composeapp.generated.resources.no_search_results
 import com.sercan.bookpedia.book.domain.Book
-import com.sercan.bookpedia.book.presentation.book_list.BookListAction
-import com.sercan.bookpedia.book.presentation.book_list.BookListState
-import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
 import com.sercan.bookpedia.book.presentation.book_list.components.BookSearchBar
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SearchScreenRoot(
-    viewModel: BookListViewModel = koinViewModel(),
+    viewModel: SearchViewModel = koinViewModel(),
     onBookClick: (Book) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     SearchScreen(
         state = state,
-        onAction = { action ->
-            when(action) {
-                is BookListAction.OnBookClick -> onBookClick(action.book)
-                else -> Unit
-            }
-            viewModel.onAction(action)
-        }
+        onSearchQueryChange = viewModel::onSearchQueryChange,
+        onBookClick = onBookClick,
+        onFavoriteClick = viewModel::toggleFavorite
     )
 }
 
 @Composable
 fun SearchScreen(
-    state: BookListState,
-    onAction: (BookListAction) -> Unit
+    state: SearchState,
+    onSearchQueryChange: (String) -> Unit,
+    onBookClick: (Book) -> Unit,
+    onFavoriteClick: (Book) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp)
     ) {
+        Text(
+            text = "Arama",
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
         BookSearchBar(
             searchQuery = state.searchQuery,
-            onSearchQueryChange = {
-                onAction(BookListAction.OnSearchQueryChange(it))
-            },
+            onSearchQueryChange = onSearchQueryChange,
             onImeSearch = {},
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if(state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        } else {
-            when {
-                state.errorMessage != null -> {
-                    Text(
-                        text = state.errorMessage.asString(),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.error
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            if(state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else if (state.searchResults.isNotEmpty()) {
+                BookList(
+                    books = state.searchResults,
+                    onBookClick = onBookClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                // Initial search design or no results
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                        modifier = Modifier.size(72.dp)
                     )
-                }
-                state.searchResults.isEmpty() -> {
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = stringResource(Res.string.no_search_results),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.error
+                        text = "Kitapları Keşfet",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
                     )
-                }
-                else -> {
-                    BookList(
-                        books = state.searchResults,
-                        onBookClick = {
-                            onAction(BookListAction.OnBookClick(it))
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Kitap adı, yazar veya ISBN ile arama yapın",
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
             }

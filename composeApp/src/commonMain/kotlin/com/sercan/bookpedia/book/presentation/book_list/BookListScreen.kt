@@ -2,35 +2,41 @@ package com.sercan.bookpedia.book.presentation.book_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import cmp_bookpedia.composeapp.generated.resources.Res
-import cmp_bookpedia.composeapp.generated.resources.favorites
-import cmp_bookpedia.composeapp.generated.resources.no_favorite_books
-import cmp_bookpedia.composeapp.generated.resources.no_search_results
-import cmp_bookpedia.composeapp.generated.resources.search_results
+import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
-import com.sercan.bookpedia.book.presentation.book_list.components.BookSearchBar
-import com.sercan.bookpedia.core.presentation.DarkBlue
-import com.sercan.bookpedia.core.presentation.DesertWhite
-import com.sercan.bookpedia.core.presentation.SandYellow
-import org.jetbrains.compose.resources.stringResource
+import com.sercan.bookpedia.core.presentation.components.PulseAnimation
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -57,95 +63,75 @@ fun BookListScreen(
     state: BookListState,
     onAction: (BookListAction) -> Unit,
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
     val searchResultsListState = rememberLazyListState()
-    val favoriteBooksListState = rememberLazyListState()
 
     LaunchedEffect(state.searchResults) {
         searchResultsListState.animateScrollToItem(0)
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .statusBarsPadding(),
     ) {
-        Text(
-            text = "Bookmark",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.padding(16.dp)
-        )
-        
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(
-                text = "Recommendation",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+        if(state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
             )
-            
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(state.searchResults.take(5)) { book ->
-                    BookCoverItem(
-                        book = book,
-                        onClick = { onAction(BookListAction.OnBookClick(book)) }
-                    )
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Just for you",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            
-            if(state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+        } else if (state.searchResults.isNotEmpty()) {
+            Column {
+                Text(
+                    text = "Bookmark",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(16.dp)
                 )
-            } else {
-                when {
-                    state.errorMessage != null -> {
-                        Text(
-                            text = state.errorMessage.asString(),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
+                
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = "Recommendation",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(state.searchResults.take(5)) { book ->
+                            BookCoverItem(
+                                book = book,
+                                onClick = { onAction(BookListAction.OnBookClick(book)) }
+                            )
+                        }
                     }
-                    state.searchResults.isEmpty() -> {
-                        Text(
-                            text = stringResource(Res.string.no_search_results),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    else -> {
-                        BookList(
-                            books = state.searchResults,
-                            onBookClick = {
-                                onAction(BookListAction.OnBookClick(it))
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            scrollState = searchResultsListState
-                        )
-                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Just for you",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    
+                    BookList(
+                        books = state.searchResults,
+                        onBookClick = {
+                            onAction(BookListAction.OnBookClick(it))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        scrollState = searchResultsListState
+                    )
                 }
             }
         }
@@ -167,11 +153,22 @@ private fun BookCoverItem(
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp
     ) {
-        AsyncImage(
-            model = book.imageUrl,
-            contentDescription = book.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+            
+            AsyncImage(
+                model = book.imageUrl,
+                contentDescription = book.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                onState = { imageState = it }
+            )
+            
+            if (imageState is AsyncImagePainter.State.Loading || imageState is AsyncImagePainter.State.Error) {
+                PulseAnimation(
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
     }
 }

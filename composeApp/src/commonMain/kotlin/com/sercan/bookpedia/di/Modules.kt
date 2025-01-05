@@ -13,6 +13,7 @@ import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
 import com.sercan.bookpedia.core.data.HttpClientFactory
 import com.sercan.bookpedia.book.data.repository.GenreRepository
 import com.sercan.bookpedia.book.presentation.onboarding.OnboardingViewModel
+import com.sercan.bookpedia.book.presentation.search.SearchViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -38,4 +39,5 @@ val sharedModule = module {
     viewModelOf(::BookDetailViewModel)
     viewModelOf(::SelectedBookViewModel)
     viewModelOf(::OnboardingViewModel)
+    viewModelOf(::SearchViewModel)
 }

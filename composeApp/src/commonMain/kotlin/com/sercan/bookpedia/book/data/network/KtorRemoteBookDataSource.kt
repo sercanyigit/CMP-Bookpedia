@@ -2,18 +2,19 @@ package com.sercan.bookpedia.book.data.network
 
 import com.sercan.bookpedia.book.data.dto.BookWorkDto
 import com.sercan.bookpedia.book.data.dto.SearchResponseDto
+import com.sercan.bookpedia.book.data.dto.TrendingBooksDto
 import com.sercan.bookpedia.core.data.safeCall
 import com.sercan.bookpedia.core.domain.DataError
 import com.sercan.bookpedia.core.domain.Result
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
+import io.ktor.client.*
+import io.ktor.client.request.*
 import io.ktor.client.request.parameter
 
 private const val BASE_URL = "https://openlibrary.org"
 
 class KtorRemoteBookDataSource(
     private val httpClient: HttpClient
-): RemoteBookDataSource {
+) : RemoteBookDataSource {
 
     override suspend fun searchBooks(
         query: String,
@@ -35,6 +36,14 @@ class KtorRemoteBookDataSource(
         return safeCall<BookWorkDto> {
             httpClient.get(
                 urlString = "$BASE_URL/works/$bookWorkId.json"
+            )
+        }
+    }
+
+    override suspend fun getTrendingBooks(): Result<TrendingBooksDto, DataError.Remote> {
+        return safeCall<TrendingBooksDto> {
+            httpClient.get(
+                urlString = "$BASE_URL/trending.json"
             )
         }
     }

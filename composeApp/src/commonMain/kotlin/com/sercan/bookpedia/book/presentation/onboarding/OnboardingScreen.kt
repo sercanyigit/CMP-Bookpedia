@@ -1,6 +1,7 @@
 package com.sercan.bookpedia.book.presentation.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,9 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cmp_bookpedia.composeapp.generated.resources.Res
+import cmp_bookpedia.composeapp.generated.resources.*
 import com.sercan.bookpedia.book.domain.Genre
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -132,11 +136,11 @@ fun WelcomePage() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        /*Image(
-            painter = painterResource(Drawable.welcome),
+        Image(
+            painter = painterResource(Res.drawable.welcome),
             contentDescription = null,
             modifier = Modifier.size(200.dp)
-        )*/
+        )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = "Welcome to Bookmark",
@@ -162,11 +166,11 @@ fun StayConnectedPage() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        /*Image(
-            painter = painterResource(Drawable.stay_connected),
+        Image(
+            painter = painterResource(Res.drawable.stay_connected),
             contentDescription = null,
             modifier = Modifier.size(200.dp)
-        ) */
+        )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = "Stay connected",

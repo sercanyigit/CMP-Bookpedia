@@ -66,4 +66,12 @@ class DefaultBookRepository(
     override suspend fun deleteFromFavorites(id: String) {
         favoriteBookDao.deleteFavoriteBook(id)
     }
+
+    override suspend fun getTrendingBooks(): Result<List<Book>, DataError.Remote> {
+        return remoteBookDataSource
+            .getTrendingBooks()
+            .map { dto ->
+                dto.works.map { it.toBook() }
+            }
+    }
 }
