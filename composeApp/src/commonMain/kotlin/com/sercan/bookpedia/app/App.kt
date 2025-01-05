@@ -13,16 +13,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.sercan.bookpedia.book.data.repository.GenreRepository
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
 import com.sercan.bookpedia.book.presentation.book_list.BookListScreenRoot
-import com.sercan.bookpedia.book.presentation.favorites.FavoritesScreenRoot
-import com.sercan.bookpedia.book.presentation.search.SearchScreenRoot
-import com.sercan.bookpedia.book.data.repository.GenreRepository
-import com.sercan.bookpedia.core.navigation.Route
-import com.sercan.bookpedia.core.presentation.components.BottomBar
+import com.sercan.bookpedia.book.presentation.favorites.FavoritesScreen
 import com.sercan.bookpedia.book.presentation.onboarding.OnboardingScreen
 import com.sercan.bookpedia.book.presentation.onboarding.OnboardingViewModel
+import com.sercan.bookpedia.book.presentation.search.SearchScreenRoot
+import com.sercan.bookpedia.core.navigation.Route
+import com.sercan.bookpedia.core.presentation.components.BottomBar
 import org.koin.compose.koinInject
 
 @Composable
@@ -93,7 +93,7 @@ fun App() {
                             }
 
                             is Route.Favorites -> {
-                                FavoritesScreenRoot(
+                                FavoritesScreen(
                                     onBookClick = { book ->
                                         selectedBook = book
                                         currentRoute = Route.BookDetails(book.id)
