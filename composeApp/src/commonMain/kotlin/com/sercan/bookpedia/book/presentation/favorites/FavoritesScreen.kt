@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
 import com.sercan.bookpedia.book.presentation.favorites.components.FavoriteBookItem
+import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
 import org.koin.compose.koinInject
 
 @Composable
@@ -82,11 +83,9 @@ fun FavoritesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                        modifier = Modifier.size(72.dp)
+                    LottieAnimationView(
+                        file = "favorite.json",
+                        modifier = Modifier.size(250.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(

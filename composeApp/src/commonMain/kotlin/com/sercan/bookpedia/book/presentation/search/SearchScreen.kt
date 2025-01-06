@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
 import com.sercan.bookpedia.book.presentation.book_list.components.BookSearchBar
+import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -66,9 +67,17 @@ fun SearchScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             if(state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                Column (
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LottieAnimationView(
+                        file = "loading.json",
+                        modifier = Modifier.size(250.dp)
+                    )
+                    Text("Yükleniyor...")
+                }
             } else if (state.searchResults.isNotEmpty()) {
                 BookList(
                     books = state.searchResults,
@@ -84,11 +93,9 @@ fun SearchScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                        modifier = Modifier.size(72.dp)
+                    LottieAnimationView(
+                        file = "search.json",
+                        modifier = Modifier.size(250.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(

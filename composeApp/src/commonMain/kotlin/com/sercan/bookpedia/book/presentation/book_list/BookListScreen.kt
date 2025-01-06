@@ -27,6 +27,7 @@ import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
 import com.sercan.bookpedia.core.presentation.components.PulseAnimation
+import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -131,7 +132,7 @@ fun BookListScreenRoot(
 @Composable
 fun BookListScreen(
     state: BookListState,
-    onAction: (BookListAction) -> Unit,
+    onAction: (BookListAction) -> Unit
 ) {
     val searchResultsListState = rememberLazyListState()
 
@@ -146,9 +147,17 @@ fun BookListScreen(
             .statusBarsPadding(),
     ) {
         if(state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LottieAnimationView(
+                    file = "loading.json",
+                    modifier = Modifier.size(250.dp)
+                )
+                Text("Yükleniyor...")
+            }
         } else if (state.searchResults.isNotEmpty()) {
             AnimatedVisibility(
                 visible = true,
