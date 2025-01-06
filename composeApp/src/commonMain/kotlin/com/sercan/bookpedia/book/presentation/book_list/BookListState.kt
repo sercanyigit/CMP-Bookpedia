@@ -1,13 +1,13 @@
 package com.sercan.bookpedia.book.presentation.book_list
 
 import com.sercan.bookpedia.book.domain.Book
-import com.sercan.bookpedia.core.presentation.UiText
+import com.sercan.bookpedia.core.presentation.base.UiState
 
 data class BookListState(
-    val searchQuery: String = "Kotlin",
+    override val isLoading: Boolean = false,
+    override val errorMessage: String? = null,
     val searchResults: List<Book> = emptyList(),
     val favoriteBooks: List<Book> = emptyList(),
-    val isLoading: Boolean = true,
-    val selectedTabIndex: Int = 0,
-    val errorMessage: UiText? = null
-)
+    val searchQuery: String = "",
+    val selectedTabIndex: Int = 0
+) : UiState

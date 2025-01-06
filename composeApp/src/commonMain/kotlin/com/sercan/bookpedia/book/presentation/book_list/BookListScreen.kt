@@ -1,23 +1,41 @@
 package com.sercan.bookpedia.book.presentation.book_list
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,7 +45,9 @@ import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
 import com.sercan.bookpedia.core.presentation.components.PulseAnimation
-import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
+import com.sercan.bookpedia.core.presentation.components.common.ScreenWrapper
+import com.sercan.bookpedia.core.presentation.utils.Constants
+import com.sercan.bookpedia.core.presentation.utils.defaultPadding
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -44,7 +64,7 @@ private fun RecommendedBooksPager(
     // Otomatik geçiş için LaunchedEffect
     LaunchedEffect(Unit) {
         while (true) {
-            delay(3000)
+            delay(Constants.Animation.PAGER_DELAY.toLong())
             val nextPage = (pagerState.currentPage + 1) % groupedBooks.size
             pagerState.animateScrollToPage(nextPage)
         }
@@ -81,7 +101,7 @@ private fun RecommendedBooksPager(
         // Page indicator
         Row(
             Modifier
-                .height(16.dp)
+                .height(Constants.UI.PAGE_INDICATOR_HEIGHT.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -89,15 +109,20 @@ private fun RecommendedBooksPager(
                 val color = if (pagerState.currentPage == iteration) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                    MaterialTheme.colorScheme.primary.copy(alpha = Constants.Search.ALPHA_DISABLED)
                 }
                 
                 Box(
                     modifier = Modifier
-                        .padding(2.dp)
+                        .padding(Constants.UI.INDICATOR_SPACING.dp)
                         .clip(CircleShape)
                         .background(color)
-                        .size(if (pagerState.currentPage == iteration) 10.dp else 8.dp)
+                        .size(
+                            if (pagerState.currentPage == iteration) 
+                                Constants.UI.INDICATOR_SIZE.dp 
+                            else 
+                                Constants.UI.INDICATOR_SMALL_SIZE.dp
+                        )
                         .animateContentSize(
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -113,108 +138,73 @@ private fun RecommendedBooksPager(
 @Composable
 fun BookListScreenRoot(
     viewModel: BookListViewModel = koinViewModel(),
-    onBookClick: (Book) -> Unit,
+    onBookClick: (Book) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    
     BookListScreen(
         state = state,
-        onAction = { action ->
-            when(action) {
-                is BookListAction.OnBookClick -> onBookClick(action.book)
-                else -> Unit
-            }
-            viewModel.onAction(action)
-        }
+        onAction = viewModel::onAction,
+        onBookClick = onBookClick
     )
 }
 
 @Composable
 fun BookListScreen(
     state: BookListState,
-    onAction: (BookListAction) -> Unit
+    onAction: (BookListAction) -> Unit,
+    onBookClick: (Book) -> Unit
 ) {
-    val searchResultsListState = rememberLazyListState()
-
-    LaunchedEffect(state.searchResults) {
-        searchResultsListState.animateScrollToItem(0)
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .statusBarsPadding(),
+    ScreenWrapper(
+        state = state,
+        onRetry = { /* Retry logic */ }
     ) {
-        if(state.isLoading) {
-            Column (
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                LottieAnimationView(
-                    file = "loading.json",
-                    modifier = Modifier.size(250.dp)
-                )
-                Text("Yükleniyor...")
-            }
-        } else if (state.searchResults.isNotEmpty()) {
-            AnimatedVisibility(
-                visible = true,
-                enter = fadeIn() + expandVertically(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
-                )
-            ) {
-                Column {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+        ) {
+            Text(
+                text = "Kitaplık",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.defaultPadding()
+            )
+            
+            if (state.searchResults.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Constants.UI.DEFAULT_PADDING.dp)
+                ) {
                     Text(
-                        text = "Kitaplık",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        modifier = Modifier.padding(16.dp)
+                        text = "Öneriler",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = Constants.UI.SMALL_PADDING.dp)
                     )
                     
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Text(
-                            text = "Öneriler",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        
-                        RecommendedBooksPager(
-                            books = state.searchResults.take(9),
-                            onBookClick = { onAction(BookListAction.OnBookClick(it)) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+                    RecommendedBooksPager(
+                        books = state.searchResults.take(9),
+                        onBookClick = onBookClick
+                    )
+                }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Sizin İçin",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        
-                        BookList(
-                            books = state.searchResults,
-                            onBookClick = {
-                                onAction(BookListAction.OnBookClick(it))
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            scrollState = searchResultsListState
-                        )
-                    }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Constants.UI.DEFAULT_PADDING.dp)
+                ) {
+                    Text(
+                        text = "Sizin İçin",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = Constants.UI.SMALL_PADDING.dp)
+                    )
+
+                    BookList(
+                        books = state.searchResults,
+                        onBookClick = onBookClick
+                    )
                 }
             }
         }
@@ -239,8 +229,8 @@ private fun AnimatedBookCoverItem(
 
     Surface(
         modifier = modifier
-            .width(120.dp)
-            .height(180.dp)
+            .width(Constants.UI.BOOK_COVER_WIDTH.dp)
+            .height(Constants.UI.BOOK_COVER_HEIGHT.dp)
             .scale(scale)
             .clickable {
                 isHovered = true

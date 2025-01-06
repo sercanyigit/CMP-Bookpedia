@@ -1,21 +1,37 @@
 package com.sercan.bookpedia.book.presentation.search
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
 import com.sercan.bookpedia.book.presentation.book_list.components.BookSearchBar
 import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
+import com.sercan.bookpedia.core.presentation.components.common.EmptySearchState
+import com.sercan.bookpedia.core.presentation.components.common.ScreenWrapper
+import com.sercan.bookpedia.core.presentation.utils.Constants
+import com.sercan.bookpedia.core.presentation.utils.defaultAnimation
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -27,92 +43,98 @@ fun SearchScreenRoot(
 
     SearchScreen(
         state = state,
-        onSearchQueryChange = viewModel::onSearchQueryChange,
-        onBookClick = onBookClick,
-        onFavoriteClick = viewModel::toggleFavorite
+        onAction = viewModel::onAction,
+        onBookClick = onBookClick
     )
 }
 
 @Composable
 fun SearchScreen(
     state: SearchState,
-    onSearchQueryChange: (String) -> Unit,
-    onBookClick: (Book) -> Unit,
-    onFavoriteClick: (Book) -> Unit
+    onAction: (SearchAction) -> Unit,
+    onBookClick: (Book) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
+    ScreenWrapper(
+        state = state,
+        onRetry = { onAction(SearchAction.OnRetry) }
     ) {
-        Text(
-            text = "Arama",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
-
-        BookSearchBar(
-            searchQuery = state.searchQuery,
-            onSearchQueryChange = onSearchQueryChange,
-            onImeSearch = {},
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Box(
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(horizontal = Constants.UI.DEFAULT_PADDING.dp)
         ) {
-            if(state.isLoading) {
-                Column (
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    LottieAnimationView(
-                        file = "loading.json",
-                        modifier = Modifier.size(250.dp)
-                    )
-                    Text("Yükleniyor...")
-                }
-            } else if (state.searchResults.isNotEmpty()) {
-                BookList(
-                    books = state.searchResults,
-                    onBookClick = onBookClick,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            Text(
+                text = "Arama",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier
+                    .padding(vertical = Constants.UI.DEFAULT_PADDING.dp)
+                    .defaultAnimation()
+            )
+
+            BookSearchBar(
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = { onAction(SearchAction.OnQueryChange(it)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultAnimation()
+            )
+
+            Spacer(modifier = Modifier.height(Constants.UI.DEFAULT_PADDING.dp))
+
+            if (state.searchQuery.isEmpty()) {
+                EmptySearchState()
             } else {
-                // Initial search design or no results
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                AnimatedVisibility(
+                    visible = state.searchResults.isNotEmpty(),
+                    enter = fadeIn() + expandVertically(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioLowBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
                 ) {
-                    LottieAnimationView(
-                        file = "search.json",
-                        modifier = Modifier.size(250.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Kitapları Keşfet",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Kitap adı, yazar veya ISBN ile arama yapın",
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    BookList(
+                        books = state.searchResults,
+                        onBookClick = onBookClick,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun EmptySearchState(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(Constants.UI.DEFAULT_PADDING.dp * 2),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        LottieAnimationView(
+            file = "search.json",
+            modifier = Modifier.size(Constants.UI.LOADING_SIZE.dp)
+        )
+        Spacer(modifier = Modifier.height(Constants.UI.DEFAULT_PADDING.dp))
+        Text(
+            text = "Kitap Ara",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.height(Constants.UI.SMALL_PADDING.dp))
+        Text(
+            text = "Aramak istediğiniz kitabın adını veya\nyazarını yazarak arama yapabilirsiniz",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
     }
 } 

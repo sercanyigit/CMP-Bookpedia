@@ -10,6 +10,8 @@ import com.sercan.bookpedia.book.domain.BookRepository
 import com.sercan.bookpedia.book.presentation.SelectedBookViewModel
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
+import com.sercan.bookpedia.book.presentation.favorites.FavoritesViewModel
+import com.sercan.bookpedia.book.presentation.onboarding.OnboardingViewModel
 import com.sercan.bookpedia.core.data.HttpClientFactory
 import com.sercan.bookpedia.book.presentation.search.SearchViewModel
 import org.koin.core.module.Module
@@ -36,4 +38,6 @@ val sharedModule = module {
     viewModelOf(::BookDetailViewModel)
     viewModelOf(::SelectedBookViewModel)
     viewModelOf(::SearchViewModel)
+    factory { FavoritesViewModel(get()) }
+    factory { OnboardingViewModel() }
 }

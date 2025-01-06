@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import com.sercan.bookpedia.book.domain.Book
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
 import com.sercan.bookpedia.book.presentation.book_list.BookListScreenRoot
-import com.sercan.bookpedia.book.presentation.favorites.FavoritesScreen
-import com.sercan.bookpedia.book.presentation.onboarding.OnboardingScreen
+import com.sercan.bookpedia.book.presentation.favorites.FavoritesScreenRoot
+import com.sercan.bookpedia.book.presentation.onboarding.OnboardingScreenRoot
 import com.sercan.bookpedia.book.presentation.search.SearchScreenRoot
 import com.sercan.bookpedia.core.navigation.Route
 import com.sercan.bookpedia.core.presentation.components.BottomBar
@@ -31,7 +31,7 @@ fun App() {
             color = MaterialTheme.colorScheme.background
         ) {
             if (showOnboarding) {
-                OnboardingScreen(
+                OnboardingScreenRoot(
                     onFinish = {
                         showOnboarding = false
                     }
@@ -85,7 +85,7 @@ fun App() {
                             }
 
                             is Route.Favorites -> {
-                                FavoritesScreen(
+                                FavoritesScreenRoot(
                                     onBookClick = { book ->
                                         selectedBook = book
                                         currentRoute = Route.BookDetails(book.id)

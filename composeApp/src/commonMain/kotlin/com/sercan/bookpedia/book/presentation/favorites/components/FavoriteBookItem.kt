@@ -1,5 +1,6 @@
 package com.sercan.bookpedia.book.presentation.favorites.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -9,19 +10,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.Book
-import com.sercan.bookpedia.core.presentation.components.PulseAnimation
+import com.sercan.bookpedia.core.presentation.utils.Constants
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteBookItem(
     book: Book,
@@ -29,114 +24,57 @@ fun FavoriteBookItem(
     onRemoveFromFavorites: (Book) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showConfirmationSheet by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = modifier,
-        onClick = { onBookClick(book) }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onBookClick(book) }
+            .padding(vertical = Constants.UI.SMALL_PADDING.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(Constants.UI.DEFAULT_PADDING.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
+            AsyncImage(
+                model = book.imageUrl,
+                contentDescription = book.title,
                 modifier = Modifier
-                    .size(width = 80.dp, height = 120.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            ) {
-                var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
-                
-                AsyncImage(
-                    model = book.imageUrl,
-                    contentDescription = book.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                    onState = { imageState = it }
-                )
-                
-                if (imageState is AsyncImagePainter.State.Loading || imageState is AsyncImagePainter.State.Error) {
-                    PulseAnimation()
-                }
-            }
+                    .size(80.dp, 120.dp)
+                    .clip(RoundedCornerShape(Constants.UI.SMALL_PADDING.dp)),
+                contentScale = ContentScale.Crop
+            )
 
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Constants.UI.SMALL_PADDING.dp)
             ) {
                 Text(
                     text = book.title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    text = book.authors.firstOrNull() ?: "Bilinmeyen Yazar",
-                    fontSize = 14.sp,
+                    text = book.authors.joinToString(),
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            
-            IconButton(
-                onClick = { showConfirmationSheet = true }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorilerden çıkar",
-                    tint = Color.Red
-                )
-            }
         }
-    }
 
-    if (showConfirmationSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showConfirmationSheet = false }
+        IconButton(
+            onClick = { onRemoveFromFavorites(book) }
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "Favorilerden Çıkar",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "\"${book.title}\" kitabını favorilerinizden çıkarmak istediğinize emin misiniz?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = { showConfirmationSheet = false },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Vazgeç")
-                    }
-                    Button(
-                        onClick = {
-                            onRemoveFromFavorites(book)
-                            showConfirmationSheet = false
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Çıkar")
-                    }
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Favorilerden Kaldır",
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 } 

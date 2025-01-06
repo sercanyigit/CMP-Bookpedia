@@ -12,6 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.core.presentation.utils.Constants
+import com.sercan.bookpedia.core.presentation.utils.defaultAnimation
 
 @Composable
 private fun AnimatedBookListItem(
@@ -43,8 +45,8 @@ private fun AnimatedBookListItem(
             )
             Divider(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .animateContentSize(),
+                    .padding(horizontal = Constants.UI.DEFAULT_PADDING.dp)
+                    .defaultAnimation(),
                 thickness = 0.5.dp
             )
         }
@@ -58,15 +60,13 @@ fun BookList(
     modifier: Modifier = Modifier,
     scrollState: LazyListState = rememberLazyListState()
 ) {
-    val uniqueBooks = remember(books) {
-        books.distinctBy { it.id }
-    }
-    
+    val uniqueBooks = books.distinctBy { it.id }
+
     LazyColumn(
         modifier = modifier,
         state = scrollState,
-        contentPadding = PaddingValues(vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(vertical = Constants.UI.SMALL_PADDING.dp),
+        verticalArrangement = Arrangement.spacedBy(Constants.UI.SMALL_PADDING.dp)
     ) {
         itemsIndexed(
             items = uniqueBooks,
