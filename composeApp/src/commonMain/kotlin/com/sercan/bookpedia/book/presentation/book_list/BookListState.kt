@@ -10,4 +10,13 @@ data class BookListState(
     val favoriteBooks: List<Book> = emptyList(),
     val searchQuery: String = "",
     val selectedTabIndex: Int = 0
-) : UiState
+) : UiState {
+    override fun copy(isLoading: Boolean, errorMessage: String?): UiState = BookListState(
+        isLoading = isLoading,
+        errorMessage = errorMessage,
+        searchResults = searchResults,
+        favoriteBooks = favoriteBooks,
+        searchQuery = searchQuery,
+        selectedTabIndex = selectedTabIndex
+    )
+}

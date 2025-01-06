@@ -9,4 +9,12 @@ data class SearchState(
     val searchQuery: String = "",
     val searchResults: List<Book> = emptyList(),
     val favoriteBooks: List<Book> = emptyList()
-) : UiState 
+) : UiState {
+    override fun copy(isLoading: Boolean, errorMessage: String?): UiState = SearchState(
+        isLoading = isLoading,
+        errorMessage = errorMessage,
+        searchQuery = searchQuery,
+        searchResults = searchResults,
+        favoriteBooks = favoriteBooks
+    )
+} 
