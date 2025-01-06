@@ -13,6 +13,10 @@ import com.sercan.bookpedia.book.presentation.favorites.FavoritesViewModel
 import com.sercan.bookpedia.book.presentation.onboarding.OnboardingViewModel
 import com.sercan.bookpedia.core.data.HttpClientFactory
 import com.sercan.bookpedia.book.presentation.search.SearchViewModel
+import com.sercan.bookpedia.book.domain.usecase.GetTrendingBooksUseCase
+import com.sercan.bookpedia.book.domain.usecase.SearchBooksUseCase
+import com.sercan.bookpedia.book.domain.usecase.GetFavoriteBooksUseCase
+import com.sercan.bookpedia.book.domain.usecase.ToggleFavoriteUseCase
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -33,9 +37,16 @@ val sharedModule = module {
     }
     single { get<FavoriteBookDatabase>().favoriteBookDao }
 
+    // Use Cases
+    single { GetTrendingBooksUseCase(get()) }
+    single { SearchBooksUseCase(get()) }
+    single { GetFavoriteBooksUseCase(get()) }
+    single { ToggleFavoriteUseCase(get()) }
+
+    // ViewModels
     viewModelOf(::BookListViewModel)
     viewModelOf(::BookDetailViewModel)
     viewModelOf(::SearchViewModel)
-    factory { FavoritesViewModel(get()) }
+    viewModelOf(::FavoritesViewModel)
     factory { OnboardingViewModel() }
 }
