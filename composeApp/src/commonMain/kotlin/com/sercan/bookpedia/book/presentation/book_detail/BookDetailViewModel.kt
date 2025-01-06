@@ -1,33 +1,27 @@
 package com.sercan.bookpedia.book.presentation.book_detail
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sercan.bookpedia.book.domain.BookRepository
+import com.sercan.bookpedia.book.domain.usecase.GetBookDescriptionUseCase
+import com.sercan.bookpedia.book.domain.usecase.IsBookFavoriteUseCase
+import com.sercan.bookpedia.book.domain.usecase.ToggleFavoriteUseCase
 import com.sercan.bookpedia.book.presentation.book_detail.state.BookDetailState
-import com.sercan.bookpedia.core.domain.onSuccess
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import com.sercan.bookpedia.core.domain.Result
+import com.sercan.bookpedia.core.presentation.base.BaseViewModel
+import com.sercan.bookpedia.core.presentation.utils.toUiText
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BookDetailViewModel(
-    private val bookRepository: BookRepository
-): ViewModel() {
+    private val getBookDescriptionUseCase: GetBookDescriptionUseCase,
+    private val isBookFavoriteUseCase: IsBookFavoriteUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+) : BaseViewModel<BookDetailState, BookDetailAction>(BookDetailState()) {
 
-    private val _state = MutableStateFlow(BookDetailState())
-    val state = _state.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
-        _state.value
-    )
-
-    fun onAction(action: BookDetailAction) {
+    override fun onAction(action: BookDetailAction) {
         when(action) {
             is BookDetailAction.OnSelectedBookChange -> {
-                _state.update { it.copy(
+                setState { copy(
                     book = action.book,
                     isLoading = true
                 ) }
@@ -39,11 +33,7 @@ class BookDetailViewModel(
             is BookDetailAction.OnFavoriteClick -> {
                 viewModelScope.launch {
                     state.value.book?.let { book ->
-                        if(state.value.isFavorite) {
-                            bookRepository.deleteFromFavorites(book.id)
-                        } else {
-                            bookRepository.markAsFavorite(book)
-                        }
+                        toggleFavoriteUseCase(book)
                     }
                 }
             }
@@ -52,10 +42,9 @@ class BookDetailViewModel(
     }
 
     private fun observeFavoriteStatus(bookId: String) {
-        bookRepository
-            .isBookFavorite(bookId)
+        isBookFavoriteUseCase(bookId)
             .onEach { isFavorite ->
-                _state.update { it.copy(
+                setState { copy(
                     isFavorite = isFavorite
                 ) }
             }
@@ -64,16 +53,25 @@ class BookDetailViewModel(
 
     private fun fetchBookDescription(bookId: String) {
         viewModelScope.launch {
-            bookRepository
-                .getBookDescription(bookId)
-                .onSuccess { description ->
-                    _state.update { it.copy(
-                        book = it.book?.copy(
-                            description = description
+            showLoading()
+            when (val result = getBookDescriptionUseCase(bookId)) {
+                is Result.Success -> setState {
+                    copy(
+                        book = book?.copy(
+                            description = result.data
                         ),
-                        isLoading = false
-                    ) }
+                        isLoading = false,
+                        errorMessage = null
+                    )
                 }
+                is Result.Error -> setState {
+                    copy(
+                        book = book,
+                        isLoading = false,
+                        errorMessage = result.error.toUiText().toString()
+                    )
+                }
+            }
         }
     }
 }

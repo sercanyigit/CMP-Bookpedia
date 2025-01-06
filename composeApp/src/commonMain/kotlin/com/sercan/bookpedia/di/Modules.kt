@@ -17,6 +17,8 @@ import com.sercan.bookpedia.book.domain.usecase.GetTrendingBooksUseCase
 import com.sercan.bookpedia.book.domain.usecase.SearchBooksUseCase
 import com.sercan.bookpedia.book.domain.usecase.GetFavoriteBooksUseCase
 import com.sercan.bookpedia.book.domain.usecase.ToggleFavoriteUseCase
+import com.sercan.bookpedia.book.domain.usecase.GetBookDescriptionUseCase
+import com.sercan.bookpedia.book.domain.usecase.IsBookFavoriteUseCase
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -42,6 +44,8 @@ val sharedModule = module {
     single { SearchBooksUseCase(get()) }
     single { GetFavoriteBooksUseCase(get()) }
     single { ToggleFavoriteUseCase(get()) }
+    single { GetBookDescriptionUseCase(get()) }
+    single { IsBookFavoriteUseCase(get()) }
 
     // ViewModels
     viewModelOf(::BookListViewModel)
