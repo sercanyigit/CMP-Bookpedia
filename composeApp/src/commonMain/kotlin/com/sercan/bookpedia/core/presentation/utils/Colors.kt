@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.core.presentation
+package com.sercan.bookpedia.core.presentation.utils
 
 import androidx.compose.ui.graphics.Color
 

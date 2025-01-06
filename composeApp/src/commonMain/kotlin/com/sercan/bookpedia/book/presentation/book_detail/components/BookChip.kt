@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.sercan.bookpedia.core.presentation.LightBlue
+import com.sercan.bookpedia.core.presentation.utils.LightBlue
 
 enum class ChipSize {
     SMALL, REGULAR

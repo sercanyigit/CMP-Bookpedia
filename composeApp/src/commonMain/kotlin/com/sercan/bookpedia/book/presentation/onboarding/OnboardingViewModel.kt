@@ -6,17 +6,17 @@ class OnboardingViewModel : BaseViewModel<OnboardingState, OnboardingAction>(Onb
     
     companion object {
         val onboardingPages = listOf(
-            OnboardingPage(
+            com.sercan.bookpedia.book.domain.model.OnboardingPage(
                 title = "Kitap Dünyasına Hoş Geldiniz",
                 description = "Binlerce kitap arasında keşfe çıkın, yeni hikayeler ve bilgiler edinin",
                 lottieRes = "onboarding1.json"
             ),
-            OnboardingPage(
+            com.sercan.bookpedia.book.domain.model.OnboardingPage(
                 title = "Favori Kitaplarınızı Kaydedin",
                 description = "Beğendiğiniz kitapları favorilerinize ekleyerek daha sonra kolayca ulaşın",
                 lottieRes = "onboarding2.json"
             ),
-            OnboardingPage(
+            com.sercan.bookpedia.book.domain.model.OnboardingPage(
                 title = "Hemen Keşfetmeye Başlayın",
                 description = "Aradığınız tüm kitaplara kolayca ulaşabilir, detaylı bilgilere göz atabilirsiniz",
                 lottieRes = "search.json"

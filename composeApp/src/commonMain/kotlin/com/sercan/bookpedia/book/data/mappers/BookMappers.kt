@@ -3,7 +3,7 @@ package com.sercan.bookpedia.book.data.mappers
 import com.sercan.bookpedia.book.data.database.BookEntity
 import com.sercan.bookpedia.book.data.dto.SearchedBookDto
 import com.sercan.bookpedia.book.data.dto.TrendingBookDto
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 
 fun SearchedBookDto.toBook(): Book {
     return Book(

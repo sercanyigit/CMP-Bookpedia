@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.book.domain
+package com.sercan.bookpedia.book.domain.model
 
 data class Book(
     val id: String,

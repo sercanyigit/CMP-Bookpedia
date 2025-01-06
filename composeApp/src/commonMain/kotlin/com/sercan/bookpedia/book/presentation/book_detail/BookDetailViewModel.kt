@@ -3,6 +3,7 @@ package com.sercan.bookpedia.book.presentation.book_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sercan.bookpedia.book.domain.BookRepository
+import com.sercan.bookpedia.book.presentation.book_detail.state.BookDetailState
 import com.sercan.bookpedia.core.domain.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

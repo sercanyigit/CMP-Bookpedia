@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import com.sercan.bookpedia.book.domain.Book
-import com.sercan.bookpedia.core.presentation.SandYellow
+import com.sercan.bookpedia.book.domain.model.Book
+import com.sercan.bookpedia.core.presentation.utils.SandYellow
 import com.sercan.bookpedia.core.presentation.components.PulseAnimation
 import kotlin.math.round
 

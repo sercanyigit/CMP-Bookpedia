@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import org.koin.compose.koinInject
 
 @Composable

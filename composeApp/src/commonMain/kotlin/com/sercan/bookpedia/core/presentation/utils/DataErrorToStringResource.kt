@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.core.presentation
+package com.sercan.bookpedia.core.presentation.utils
 
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.error_disk_full

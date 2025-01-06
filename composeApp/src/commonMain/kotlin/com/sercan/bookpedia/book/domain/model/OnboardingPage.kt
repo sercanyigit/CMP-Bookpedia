@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.book.presentation.onboarding
+package com.sercan.bookpedia.book.domain.model
 
 data class OnboardingPage(
     val title: String,

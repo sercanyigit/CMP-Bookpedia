@@ -1,6 +1,6 @@
-package com.sercan.bookpedia.book.presentation.book_detail
+package com.sercan.bookpedia.book.presentation.book_detail.state
 
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.core.presentation.base.UiState
 
 data class BookDetailState(

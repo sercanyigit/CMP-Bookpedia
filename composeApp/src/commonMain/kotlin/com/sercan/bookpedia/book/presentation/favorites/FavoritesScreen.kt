@@ -30,11 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.presentation.favorites.components.FavoriteBookItem
+import com.sercan.bookpedia.book.presentation.favorites.state.FavoritesState
 import com.sercan.bookpedia.core.presentation.components.ConfirmationBottomSheet
 import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
-import com.sercan.bookpedia.core.presentation.components.common.ScreenWrapper
+import com.sercan.bookpedia.core.presentation.components.ScreenWrapper
 import com.sercan.bookpedia.core.presentation.utils.Constants
 import com.sercan.bookpedia.core.presentation.utils.defaultAnimation
 import org.koin.compose.viewmodel.koinViewModel

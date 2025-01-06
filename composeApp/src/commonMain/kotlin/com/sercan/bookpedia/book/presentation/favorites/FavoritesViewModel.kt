@@ -2,6 +2,7 @@ package com.sercan.bookpedia.book.presentation.favorites
 
 import androidx.lifecycle.viewModelScope
 import com.sercan.bookpedia.book.domain.BookRepository
+import com.sercan.bookpedia.book.presentation.favorites.state.FavoritesState
 import com.sercan.bookpedia.core.presentation.base.BaseViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

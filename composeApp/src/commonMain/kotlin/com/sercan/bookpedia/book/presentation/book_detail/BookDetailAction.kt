@@ -1,6 +1,6 @@
 package com.sercan.bookpedia.book.presentation.book_detail
 
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 
 sealed interface BookDetailAction {
     data object OnBackClick: BookDetailAction

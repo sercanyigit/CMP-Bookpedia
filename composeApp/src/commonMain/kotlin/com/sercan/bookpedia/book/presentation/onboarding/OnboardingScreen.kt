@@ -20,13 +20,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sercan.bookpedia.book.domain.model.OnboardingPage
 import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
-import com.sercan.bookpedia.core.presentation.components.common.ScreenWrapper
+import com.sercan.bookpedia.core.presentation.components.ScreenWrapper
 import com.sercan.bookpedia.core.presentation.utils.Constants
 import org.koin.compose.viewmodel.koinViewModel
 

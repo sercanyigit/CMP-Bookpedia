@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.core.presentation.components.common
+package com.sercan.bookpedia.core.presentation.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -8,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sercan.bookpedia.core.presentation.components.LottieAnimationView
 import com.sercan.bookpedia.core.presentation.utils.Constants
 
 @Composable

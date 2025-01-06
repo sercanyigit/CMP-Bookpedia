@@ -11,7 +11,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.core.presentation.utils.Constants
 import com.sercan.bookpedia.core.presentation.utils.defaultAnimation
 

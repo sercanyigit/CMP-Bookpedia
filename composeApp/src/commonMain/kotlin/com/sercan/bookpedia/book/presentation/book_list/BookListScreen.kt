@@ -42,10 +42,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.presentation.book_list.components.BookList
+import com.sercan.bookpedia.book.presentation.book_list.state.BookListState
 import com.sercan.bookpedia.core.presentation.components.PulseAnimation
-import com.sercan.bookpedia.core.presentation.components.common.ScreenWrapper
+import com.sercan.bookpedia.core.presentation.components.ScreenWrapper
 import com.sercan.bookpedia.core.presentation.utils.Constants
 import com.sercan.bookpedia.core.presentation.utils.defaultPadding
 import kotlinx.coroutines.delay

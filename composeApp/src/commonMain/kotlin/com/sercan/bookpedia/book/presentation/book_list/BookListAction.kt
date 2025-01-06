@@ -1,6 +1,6 @@
 package com.sercan.bookpedia.book.presentation.book_list
 
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 
 sealed interface BookListAction {
     data class OnBookClick(val book: Book) : BookListAction

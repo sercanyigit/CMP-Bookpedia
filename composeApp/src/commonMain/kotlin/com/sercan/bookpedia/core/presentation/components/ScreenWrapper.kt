@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.core.presentation.components.common
+package com.sercan.bookpedia.core.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

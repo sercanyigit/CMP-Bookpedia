@@ -5,7 +5,7 @@ import com.sercan.bookpedia.book.data.database.FavoriteBookDao
 import com.sercan.bookpedia.book.data.mappers.toBook
 import com.sercan.bookpedia.book.data.mappers.toBookEntity
 import com.sercan.bookpedia.book.data.network.RemoteBookDataSource
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.domain.BookRepository
 import com.sercan.bookpedia.core.domain.DataError
 import com.sercan.bookpedia.core.domain.EmptyResult

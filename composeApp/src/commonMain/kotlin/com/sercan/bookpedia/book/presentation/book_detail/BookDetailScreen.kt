@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import com.sercan.bookpedia.book.presentation.book_detail.state.BookDetailState
 
 @Composable
 fun BookDetailScreen(

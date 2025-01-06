@@ -12,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
 import com.sercan.bookpedia.book.presentation.book_list.BookListScreenRoot
 import com.sercan.bookpedia.book.presentation.favorites.FavoritesScreenRoot

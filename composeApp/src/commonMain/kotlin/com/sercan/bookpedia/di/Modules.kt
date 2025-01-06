@@ -7,7 +7,6 @@ import com.sercan.bookpedia.book.data.network.KtorRemoteBookDataSource
 import com.sercan.bookpedia.book.data.network.RemoteBookDataSource
 import com.sercan.bookpedia.book.data.repository.DefaultBookRepository
 import com.sercan.bookpedia.book.domain.BookRepository
-import com.sercan.bookpedia.book.presentation.SelectedBookViewModel
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
 import com.sercan.bookpedia.book.presentation.favorites.FavoritesViewModel
@@ -36,7 +35,6 @@ val sharedModule = module {
 
     viewModelOf(::BookListViewModel)
     viewModelOf(::BookDetailViewModel)
-    viewModelOf(::SelectedBookViewModel)
     viewModelOf(::SearchViewModel)
     factory { FavoritesViewModel(get()) }
     factory { OnboardingViewModel() }

@@ -1,5 +1,6 @@
 package com.sercan.bookpedia.book.domain
 
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.core.domain.DataError
 import com.sercan.bookpedia.core.domain.EmptyResult
 import com.sercan.bookpedia.core.domain.Result

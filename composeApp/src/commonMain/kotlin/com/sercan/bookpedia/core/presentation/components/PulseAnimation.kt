@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.sercan.bookpedia.core.presentation.SandYellow
+import com.sercan.bookpedia.core.presentation.utils.SandYellow
 
 @Composable
 fun PulseAnimation(modifier: Modifier = Modifier) {

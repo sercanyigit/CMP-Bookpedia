@@ -1,13 +1,14 @@
 package com.sercan.bookpedia.book.presentation.search
 
 import androidx.lifecycle.viewModelScope
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.domain.BookRepository
+import com.sercan.bookpedia.book.presentation.search.state.SearchState
 import com.sercan.bookpedia.core.domain.Result
 import com.sercan.bookpedia.core.presentation.base.BaseViewModel
+import com.sercan.bookpedia.core.presentation.utils.toUiText
 import com.sercan.bookpedia.core.presentation.utils.Constants
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -17,8 +18,6 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     private val repository: BookRepository
 ) : BaseViewModel<SearchState, SearchAction>(SearchState()) {
-
-    private var searchJob: Job? = null
 
     init {
         observeSearchQuery()
@@ -59,7 +58,7 @@ class SearchViewModel(
                     copy(
                         searchResults = emptyList(),
                         isLoading = false,
-                        errorMessage = result.error.toString()
+                        errorMessage = result.error.toUiText().toString()
                     ) as SearchState
                 }
             }

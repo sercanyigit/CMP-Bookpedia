@@ -1,6 +1,6 @@
 package com.sercan.bookpedia.book.presentation.search
 
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 
 sealed interface SearchAction {
     data class OnQueryChange(val query: String) : SearchAction

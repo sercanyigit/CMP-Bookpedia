@@ -1,4 +1,4 @@
-package com.sercan.bookpedia.core.presentation.components.common
+package com.sercan.bookpedia.book.presentation.search.state
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme

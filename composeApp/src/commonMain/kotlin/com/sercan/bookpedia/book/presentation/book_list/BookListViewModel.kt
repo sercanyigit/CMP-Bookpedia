@@ -3,10 +3,12 @@
 package com.sercan.bookpedia.book.presentation.book_list
 
 import androidx.lifecycle.viewModelScope
-import com.sercan.bookpedia.book.domain.Book
+import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.domain.BookRepository
+import com.sercan.bookpedia.book.presentation.book_list.state.BookListState
 import com.sercan.bookpedia.core.domain.Result
 import com.sercan.bookpedia.core.presentation.base.BaseViewModel
+import com.sercan.bookpedia.core.presentation.utils.toUiText
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
@@ -29,11 +31,11 @@ class BookListViewModel(
                         errorMessage = null
                     )
                 }
-                is Result.Error -> setState { 
+                is Result.Error -> setState {
                     copy(
                         searchResults = emptyList(),
                         isLoading = false,
-                        errorMessage = result.error.toString()
+                        errorMessage = result.error.toUiText().toString()
                     ) as BookListState
                 }
             }
