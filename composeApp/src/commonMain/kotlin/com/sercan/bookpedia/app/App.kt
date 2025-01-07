@@ -12,20 +12,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
 import com.sercan.bookpedia.book.presentation.book_list.BookListScreenRoot
+import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
 import com.sercan.bookpedia.book.presentation.favorites.FavoritesScreenRoot
 import com.sercan.bookpedia.book.presentation.onboarding.OnboardingScreenRoot
 import com.sercan.bookpedia.book.presentation.search.SearchScreenRoot
 import com.sercan.bookpedia.core.navigation.Route
 import com.sercan.bookpedia.core.presentation.components.BottomBar
+import com.sercan.bookpedia.core.presentation.utils.DarkColors
+import com.sercan.bookpedia.core.presentation.utils.LightColors
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App() {
     var showOnboarding by remember { mutableStateOf(true) }
+    val viewModel: BookListViewModel = koinViewModel()
+    val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
 
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = if (isDarkMode) DarkColors else LightColors
+    ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -74,7 +83,6 @@ fun App() {
                                     }
                                 )
                             }
-
                             is Route.Search -> {
                                 SearchScreenRoot(
                                     onBookClick = { book ->
@@ -83,7 +91,6 @@ fun App() {
                                     }
                                 )
                             }
-
                             is Route.Favorites -> {
                                 FavoritesScreenRoot(
                                     onBookClick = { book ->
@@ -92,10 +99,7 @@ fun App() {
                                     }
                                 )
                             }
-
-                            is Route.BookDetails -> {
-                                // Bu durumda zaten selectedBook null değilse yukarıdaki let bloğunda işlenecek
-                            }
+                            else -> Unit
                         }
                     }
                 }

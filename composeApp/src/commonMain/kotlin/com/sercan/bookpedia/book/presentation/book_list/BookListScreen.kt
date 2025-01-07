@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +42,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cmp_bookpedia.composeapp.generated.resources.Res
+import cmp_bookpedia.composeapp.generated.resources.ic_night
+import cmp_bookpedia.composeapp.generated.resources.ic_sunny
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import com.sercan.bookpedia.book.domain.model.Book
@@ -48,8 +53,8 @@ import com.sercan.bookpedia.book.presentation.book_list.state.BookListState
 import com.sercan.bookpedia.core.presentation.components.PulseAnimation
 import com.sercan.bookpedia.core.presentation.components.ScreenWrapper
 import com.sercan.bookpedia.core.presentation.utils.Constants
-import com.sercan.bookpedia.core.presentation.utils.defaultPadding
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -142,9 +147,11 @@ fun BookListScreenRoot(
     onBookClick: (Book) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
     
     BookListScreen(
         state = state,
+        isDarkMode = isDarkMode,
         onAction = viewModel::onAction,
         onBookClick = onBookClick
     )
@@ -153,25 +160,40 @@ fun BookListScreenRoot(
 @Composable
 fun BookListScreen(
     state: BookListState,
+    isDarkMode: Boolean,
     onAction: (BookListAction) -> Unit,
     onBookClick: (Book) -> Unit
 ) {
-    ScreenWrapper(
-        state = state,
-        onRetry = { /* Retry logic */ }
-    ) {
+    ScreenWrapper(state = state) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            Text(
-                text = "Kitaplık",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.defaultPadding()
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Constants.UI.DEFAULT_PADDING.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Kitaplık",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                
+                IconButton(
+                    onClick = { onAction(BookListAction.OnThemeToggle) }
+                ) {
+                    Image(
+                        painter = painterResource(if (isDarkMode) Res.drawable.ic_sunny else Res.drawable.ic_night),
+                        contentDescription = if (isDarkMode) "Açık Tema" else "Koyu Tema",
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
             
             if (state.searchResults.isNotEmpty()) {
                 Column(

@@ -54,6 +54,7 @@ class BookListViewModel(
                 copy(selectedTabIndex = action.index) 
             }
             is BookListAction.OnFavoriteClick -> toggleFavorite(action.book)
+            BookListAction.OnThemeToggle -> toggleTheme()
         }
     }
 
