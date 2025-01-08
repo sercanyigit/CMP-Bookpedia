@@ -1,14 +1,69 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+# 📚 Bookpedia - KMP Book Discovery App
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
-
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Bookpedia is a modern, cross-platform book discovery application built with Kotlin Multiplatform (KMP) and Jetpack Compose. It allows users to explore, search, and manage their favorite books across Android, iOS, and Desktop platforms.
 
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## ✨ Features
+
+- 🌓 Dynamic theme switching (Light/Dark mode) with persistent settings
+- 📱 Cross-platform support (Android, iOS, Desktop)
+- 🔍 Book search functionality
+- ❤️ Favorite books management
+- 📚 Trending books discovery
+- 🎯 Book recommendations
+- 🖼️ Beautiful and responsive UI with Jetpack Compose
+- 💾 Local data persistence
+- 🌐 Real-time book data fetching
+
+## 🛠️ Tech Stack
+
+- **Kotlin Multiplatform** - For sharing code across platforms
+- **Jetpack Compose** - For building the UI
+- **Koin** - For dependency injection
+- **Ktor** - For network requests
+- **SQLDelight** - For local database
+- **DataStore** - For preferences management
+- **Coil** - For image loading
+- **Kotlin Coroutines & Flow** - For asynchronous operations
+
+## 🏗️ Architecture
+
+The project follows Clean Architecture principles and is organized into the following layers:
+
+- **Presentation** - UI components, ViewModels, and UI state management
+- **Domain** - Business logic and use cases
+- **Data** - Repositories, data sources, and models
+- **Core** - Common utilities and base components
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Android Studio Arctic Fox or later
+- Xcode 13 or later (for iOS)
+- JDK 11 or later
+- Kotlin 1.9.0 or later
+
+
+## 📱 Platform-Specific Details
+
+### Android
+- Minimum SDK: 24
+- Target SDK: 34
+- Uses Material3 design components
+
+### iOS
+- Minimum iOS version: 14.0
+- Uses SwiftUI integration with Compose
+
+### Desktop
+- Supports Windows, macOS, and Linux
+- Distribution and Packaging
+Mac      -> ./gradlew packageDmg
+Windows  -> ./gradlew packageMsi
+Linux    -> ./gradlew packageDeb
+
+## 📞 Contact
+
+Sercan Yiğit - [@Linkedin](https://www.linkedin.com/in/sercan-yi%C4%9Fit-993b531b5/)
+

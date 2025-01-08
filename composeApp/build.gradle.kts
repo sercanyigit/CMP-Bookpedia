@@ -127,8 +127,30 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.sercan.bookpedia"
+            packageName = "Bookpedia"
             packageVersion = "1.0.0"
+
+            macOS {
+                bundleID = "com.sercan.bookpedia"
+                appCategory = "public.app-category.books"
+                iconFile.set(project.file("resources/appicon.icns"))
+            }
+
+            windows {
+                menuGroup = "Bookpedia"
+                upgradeUuid = "89cdc8d0-2c6f-4e29-a4e9-321d6a6f5caf"
+                iconFile.set(project.file("resources/appicon.ico"))
+                dirChooser = true
+                shortcut = true
+                menuGroup = "Bookpedia"
+                perUserInstall = true
+                installationPath = "Bookpedia"
+            }
+            
+            linux {
+                iconFile.set(project.file("resources/appicon.png"))
+                shortcut = true
+            }
         }
     }
 }
