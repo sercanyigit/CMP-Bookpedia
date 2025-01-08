@@ -7,12 +7,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
 import com.sercan.bookpedia.book.presentation.book_list.BookListScreenRoot
@@ -30,7 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App() {
     var showOnboarding by remember { mutableStateOf(true) }
     val viewModel: BookListViewModel = koinViewModel()
-    val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
 
     MaterialTheme(
         colorScheme = if (isDarkMode) DarkColors else LightColors

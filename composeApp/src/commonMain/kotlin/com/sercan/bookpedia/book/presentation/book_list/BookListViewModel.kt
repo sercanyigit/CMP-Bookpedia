@@ -7,6 +7,7 @@ import com.sercan.bookpedia.book.domain.model.Book
 import com.sercan.bookpedia.book.domain.usecase.GetTrendingBooksUseCase
 import com.sercan.bookpedia.book.domain.usecase.ToggleFavoriteUseCase
 import com.sercan.bookpedia.book.presentation.book_list.state.BookListState
+import com.sercan.bookpedia.core.data.preferences.DataStoreProvider
 import com.sercan.bookpedia.core.domain.Result
 import com.sercan.bookpedia.core.presentation.base.BaseViewModel
 import com.sercan.bookpedia.core.presentation.utils.toUiText
@@ -15,11 +16,21 @@ import kotlinx.coroutines.launch
 
 class BookListViewModel(
     private val getTrendingBooksUseCase: GetTrendingBooksUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val dataStoreProvider: DataStoreProvider
 ) : BaseViewModel<BookListState, BookListAction>(BookListState()) {
 
     init {
         loadTrendingBooks()
+        observeTheme()
+    }
+
+    private fun observeTheme() {
+        viewModelScope.launch {
+            dataStoreProvider.isDarkMode.collect { isDarkMode ->
+                _isDarkMode.value = isDarkMode
+            }
+        }
     }
 
     private fun loadTrendingBooks() {
@@ -38,7 +49,7 @@ class BookListViewModel(
                         searchResults = emptyList(),
                         isLoading = false,
                         errorMessage = result.error.toUiText().toString()
-                    ) as BookListState
+                    )
                 }
             }
         }
@@ -54,7 +65,13 @@ class BookListViewModel(
                 copy(selectedTabIndex = action.index) 
             }
             is BookListAction.OnFavoriteClick -> toggleFavorite(action.book)
-            BookListAction.OnThemeToggle -> toggleTheme()
+            is BookListAction.OnThemeToggle -> {
+                toggleTheme()
+                viewModelScope.launch {
+                    dataStoreProvider.setDarkMode(isDarkMode.value)
+                }
+            }
+            is BookListAction.LoadBooks -> loadTrendingBooks()
         }
     }
 

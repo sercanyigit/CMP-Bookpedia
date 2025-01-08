@@ -7,5 +7,6 @@ sealed interface BookListAction {
     data class OnSearchQueryChange(val query: String) : BookListAction
     data class OnTabSelected(val index: Int) : BookListAction
     data class OnFavoriteClick(val book: Book) : BookListAction
-    object OnThemeToggle : BookListAction
+    data object LoadBooks : BookListAction
+    data object OnThemeToggle : BookListAction
 }

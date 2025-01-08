@@ -9,7 +9,7 @@ abstract class BaseViewModel<State : UiState, Action>(initialState: State) : Vie
     private val _state = MutableStateFlow(initialState)
     val state = _state.asStateFlow()
     
-    private val _isDarkMode = MutableStateFlow(false)
+    protected val _isDarkMode = MutableStateFlow(false)
     val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
     
     abstract fun onAction(action: Action)

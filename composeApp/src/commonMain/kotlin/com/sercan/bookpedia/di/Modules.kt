@@ -7,20 +7,21 @@ import com.sercan.bookpedia.book.data.network.KtorRemoteBookDataSource
 import com.sercan.bookpedia.book.data.network.RemoteBookDataSource
 import com.sercan.bookpedia.book.data.repository.DefaultBookRepository
 import com.sercan.bookpedia.book.domain.BookRepository
+import com.sercan.bookpedia.book.domain.usecase.GetBookDescriptionUseCase
+import com.sercan.bookpedia.book.domain.usecase.GetFavoriteBooksUseCase
+import com.sercan.bookpedia.book.domain.usecase.GetTrendingBooksUseCase
+import com.sercan.bookpedia.book.domain.usecase.IsBookFavoriteUseCase
+import com.sercan.bookpedia.book.domain.usecase.SearchBooksUseCase
+import com.sercan.bookpedia.book.domain.usecase.ToggleFavoriteUseCase
 import com.sercan.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.sercan.bookpedia.book.presentation.book_list.BookListViewModel
 import com.sercan.bookpedia.book.presentation.favorites.FavoritesViewModel
 import com.sercan.bookpedia.book.presentation.onboarding.OnboardingViewModel
-import com.sercan.bookpedia.core.data.HttpClientFactory
 import com.sercan.bookpedia.book.presentation.search.SearchViewModel
-import com.sercan.bookpedia.book.domain.usecase.GetTrendingBooksUseCase
-import com.sercan.bookpedia.book.domain.usecase.SearchBooksUseCase
-import com.sercan.bookpedia.book.domain.usecase.GetFavoriteBooksUseCase
-import com.sercan.bookpedia.book.domain.usecase.ToggleFavoriteUseCase
-import com.sercan.bookpedia.book.domain.usecase.GetBookDescriptionUseCase
-import com.sercan.bookpedia.book.domain.usecase.IsBookFavoriteUseCase
+import com.sercan.bookpedia.core.data.HttpClientFactory
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -48,9 +49,15 @@ val sharedModule = module {
     single { IsBookFavoriteUseCase(get()) }
 
     // ViewModels
-    viewModelOf(::BookListViewModel)
-    viewModelOf(::BookDetailViewModel)
+    viewModel { 
+        BookListViewModel(
+            getTrendingBooksUseCase = get(),
+            toggleFavoriteUseCase = get(),
+            dataStoreProvider = get()
+        )
+    }
     viewModelOf(::SearchViewModel)
     viewModelOf(::FavoritesViewModel)
-    factory { OnboardingViewModel() }
+    viewModelOf(::BookDetailViewModel)
+    viewModelOf(::OnboardingViewModel)
 }

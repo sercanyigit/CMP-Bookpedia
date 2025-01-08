@@ -30,4 +30,12 @@ object Constants {
         const val ALPHA_ICON = 0.6f
         const val ALPHA_BORDER = 0.12f
     }
+
+    object Preferences {
+        /* PREFERENCES_APP değeri .preferences_pb ifadesi ile bitmeli
+           iOS ve Desktop ta .preferences_pb olması gerekiyor
+        */
+        const val PREFERENCES_APP = "bookpedia.preferences_pb"
+        const val IS_DARK_MODE_KEY = "is_dark_mode"
+    }
 } 
