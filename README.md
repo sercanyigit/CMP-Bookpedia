@@ -1,6 +1,9 @@
-# 📚 Bookpedia - KMP Book Discovery App
+# 📚 Bookpedia - CMP Book Discovery App
 
-Bookpedia is a modern, cross-platform book discovery application built with Kotlin Multiplatform (KMP) and Jetpack Compose. It allows users to explore, search, and manage their favorite books across Android, iOS, and Desktop platforms.
+Bookpedia is a modern, cross-platform book discovery application built with Compose Multiplatform (CMP). It allows users to explore, search their favorite books across Android, iOS, and Desktop platforms.
+
+
+https://github.com/user-attachments/assets/0dcba1d4-4aab-47dd-8e86-4d7e215b23b2
 
 
 ## ✨ Features
@@ -35,9 +38,7 @@ The project follows Clean Architecture principles and is organized into the foll
 - **Data** - Repositories, data sources, and models
 - **Core** - Common utilities and base components
 
-## 🚀 Getting Started
-
-### Prerequisites
+## 🚀 Prerequisites
 
 - Android Studio Arctic Fox or later
 - Xcode 13 or later (for iOS)
@@ -58,10 +59,11 @@ The project follows Clean Architecture principles and is organized into the foll
 
 ### Desktop
 - Supports Windows, macOS, and Linux
-- Distribution and Packaging
-Mac      -> ./gradlew packageDmg
-Windows  -> ./gradlew packageMsi
-Linux    -> ./gradlew packageDeb
+
+### Desktop Distribution and Packaging
+- Mac      -> ./gradlew packageDmg
+- Windows  -> ./gradlew packageMsi
+- Linux    -> ./gradlew packageDeb
 
 ## 📞 Contact
 
