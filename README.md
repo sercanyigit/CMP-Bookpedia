@@ -8,14 +8,14 @@ https://github.com/user-attachments/assets/0dcba1d4-4aab-47dd-8e86-4d7e215b23b2
 
 ## ✨ Features
 
-- 🌓 Dynamic theme switching (Light/Dark mode) with persistent settings
+- 🌓 Dynamic theme switching (Light/Dark mode)
 - 📱 Cross-platform support (Android, iOS, Desktop)
 - 🔍 Book search functionality
 - ❤️ Favorite books management
 - 📚 Trending books discovery
 - 🎯 Book recommendations
 - 🖼️ Beautiful and responsive UI with Jetpack Compose
-- 💾 Local data persistence
+- 💾 Local data management
 - 🌐 Real-time book data fetching
 
 ## 🛠️ Technologies used
