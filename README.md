@@ -18,7 +18,7 @@ https://github.com/user-attachments/assets/0dcba1d4-4aab-47dd-8e86-4d7e215b23b2
 - 💾 Local data persistence
 - 🌐 Real-time book data fetching
 
-## 🛠️ Tech Stack
+## 🛠️ Technologies used
 
 - **Kotlin Multiplatform** - For sharing code across platforms
 - **Jetpack Compose** - For building the UI
@@ -43,14 +43,14 @@ The project follows Clean Architecture principles and is organized into the foll
 - Android Studio Arctic Fox or later
 - Xcode 13 or later (for iOS)
 - JDK 11 or later
-- Kotlin 1.9.0 or later
+- Kotlin 2.0.21 or later
 
 
 ## 📱 Platform-Specific Details
 
 ### Android
 - Minimum SDK: 24
-- Target SDK: 34
+- Target SDK: 35
 - Uses Material3 design components
 
 ### iOS
